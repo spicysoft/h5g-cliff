@@ -85,10 +85,12 @@ var Player = (function (_super) {
         this.x += this.vx;
         this.y += this.vy;
         this.display.scaleY += (1 - this.display.scaleY) * 0.2;
-        if (this.x < Util.w(0.1) || this.x > Util.w(0.9)) {
+        // on the wall
+        if (this.checkWalls()) {
             this.setStateHang();
             this.display.scaleX *= -1;
         }
+        this.updateCamera();
     };
     Player.prototype.setStateMiss = function () {
         if (this.state == this.stateMiss)
@@ -99,6 +101,60 @@ var Player = (function (_super) {
         EffectLine.create(this.x, this.y, this.radius, PLAYER_COLOR, 8);
     };
     Player.prototype.stateMiss = function () {
+    };
+    // process
+    Player.prototype.checkWalls = function () {
+        var _this = this;
+        var hit = false;
+        var radius = this.radius + Util.w(WALL_WIDTH_PER_W) * 0.5;
+        var range = radius;
+        var ndx = 0;
+        var ndy = 0;
+        Wall.walls.forEach(function (wall) {
+            if (wall.py0 > _this.y - range && wall.py1 < _this.y + range) {
+                // 最近点
+                var dx = _this.x - wall.px0;
+                var dy = _this.y - wall.py0;
+                var dot = dx * wall.uvx + dy * wall.uvy;
+                dot = Util.clamp(dot, 0, wall.length);
+                var npx = wall.px0 + wall.uvx * dot;
+                var npy = wall.py0 + wall.uvy * dot;
+                // 接触判定と反射
+                dx = _this.x - npx;
+                dy = _this.y - npy;
+                var l = Math.pow(dx, 2) + Math.pow(dy, 2);
+                if (l <= Math.pow(range, 2)) {
+                    range = Math.sqrt(l);
+                    ndx = dx;
+                    ndy = dy;
+                    hit = true;
+                }
+            }
+        });
+        // reflect
+        if (hit) {
+            var _l = 1 / range;
+            ndx *= _l;
+            ndy *= _l;
+            var dot = radius - range;
+            dot *= 0.95;
+            this.x += ndx * dot;
+            this.y += ndy * dot;
+            // 頭打ちならスルー
+            if (this.vx * (this.x - Util.w(0.5)) < 0) {
+                hit = false;
+            }
+            dot = ndx * this.vx + ndy * this.vy;
+            this.vx -= ndx * dot;
+            this.vy -= ndy * dot;
+        }
+        return hit;
+    };
+    Player.prototype.updateCamera = function () {
+        var camY = this.y - Util.h(0.65);
+        if (Camera2D.y > camY) {
+            Camera2D.y += (camY - Camera2D.y) * 0.25;
+        }
     };
     Player.I = null;
     return Player;

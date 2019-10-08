@@ -1,12 +1,12 @@
 // Liberapp 2019 - Tahiti Katagai
 // ゲームシーン
 
-const WALL_WIDTH_PER_W = 1/15;
+const WALL_WIDTH_PER_W = 1/32;
 
-const PLAYER_RADIUS_PER_W = 1/15;
-const PLAYER_SPEED_X_PER_W = 1/80;
-const PLAYER_JUMP_Y_PER_W = -1/50;
-const GRAVITY_PER_H = -PLAYER_JUMP_Y_PER_W/60;
+const PLAYER_RADIUS_PER_W = 1/24;
+const PLAYER_SPEED_X_PER_W = 1/120;
+const PLAYER_JUMP_Y_PER_W = -1/60;
+const GRAVITY_PER_H = -PLAYER_JUMP_Y_PER_W/48;
 
 const SAVE_KEY_BESTSCORE = "cliff-bestScore";
 

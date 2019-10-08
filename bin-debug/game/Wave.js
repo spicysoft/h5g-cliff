@@ -15,16 +15,25 @@ var Wave = (function (_super) {
     function Wave() {
         var _this = _super.call(this) || this;
         _this.milestone = 0;
+        _this.wallY = Util.h(1);
+        _this.wallL = Util.w(0.15);
+        _this.wallR = Util.w(0.85);
         return _this;
     }
     Wave.prototype.update = function () {
+        while (this.wallY >= Camera2D.y - Util.h(0.5)) {
+            var y = this.wallY - Util.h(1 / 8);
+            var l = randBool() ? Util.w(0.15) : Util.w(0.3);
+            var r = randBool() ? Util.w(0.85) : Util.w(0.7);
+            new Wall(this.wallL, this.wallY, l, y);
+            new Wall(this.wallR, this.wallY, r, y);
+            this.wallY = y;
+            this.wallL = l;
+            this.wallR = r;
+        }
         if (GameOver.I || StartMessage.I)
             return;
         Game.hard = Util.clamp(Player.I.y / Util.h(50), 0, 1);
-        if (this.milestone <= Player.I.y) {
-            this.milestone += Util.lerp(1.0, 0.5, Game.hard) * Util.width;
-            Score.I.addPoint();
-        }
     };
     return Wave;
 }(GameObject));

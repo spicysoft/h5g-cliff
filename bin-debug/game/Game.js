@@ -3,11 +3,11 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var WALL_WIDTH_PER_W = 1 / 15;
-var PLAYER_RADIUS_PER_W = 1 / 15;
-var PLAYER_SPEED_X_PER_W = 1 / 80;
-var PLAYER_JUMP_Y_PER_W = -1 / 50;
-var GRAVITY_PER_H = -PLAYER_JUMP_Y_PER_W / 60;
+var WALL_WIDTH_PER_W = 1 / 32;
+var PLAYER_RADIUS_PER_W = 1 / 24;
+var PLAYER_SPEED_X_PER_W = 1 / 120;
+var PLAYER_JUMP_Y_PER_W = -1 / 60;
+var GRAVITY_PER_H = -PLAYER_JUMP_Y_PER_W / 48;
 var SAVE_KEY_BESTSCORE = "cliff-bestScore";
 var BACK_COLOR = 0x205070; // index.htmlで設定
 var FONT_COLOR = 0xc0c4d0;

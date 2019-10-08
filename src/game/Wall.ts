@@ -7,9 +7,9 @@ class Wall extends GameObject{
 
     // 始点と終点
     px0:number;
-    py0:number;
+    py0:number; // lower
     px1:number;
-    py1:number;
+    py1:number; // higher
     
     // 接触判定要 単位ベクトルと長さ
     uvx:number;
@@ -54,7 +54,7 @@ class Wall extends GameObject{
     }
 
     update(){
-        if( Camera2D.y - Util.h(0.5) > this.py1  ){
+        if( Camera2D.y + Util.h(1) < this.py1  ){
             this.destroy();
         }
     }

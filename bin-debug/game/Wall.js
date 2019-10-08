@@ -43,7 +43,7 @@ var Wall = (function (_super) {
         shape.graphics.lineTo(this.px1, this.py1);
     };
     Wall.prototype.update = function () {
-        if (Camera2D.y - Util.h(0.5) > this.py1) {
+        if (Camera2D.y + Util.h(1) < this.py1) {
             this.destroy();
         }
     };
