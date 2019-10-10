@@ -1,5 +1,5 @@
 // Liberapp 2019 - Tahiti Katagai
-// プレイヤー 四角
+// プレイヤー　まる
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
@@ -24,20 +24,7 @@ var Player = (function (_super) {
         _this.setDisplay(Util.w(0.5), Util.h(0.5) + Util.w(0.3));
         _this.button = new Button(null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.0, null); // 透明な全画面ボタン
         return _this;
-        // Camera2D.x = 
     }
-    Object.defineProperty(Player.prototype, "x", {
-        get: function () { return this.display.x; },
-        set: function (x) { this.display.x = x; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Player.prototype, "y", {
-        get: function () { return this.display.y; },
-        set: function (y) { this.display.y = y; },
-        enumerable: true,
-        configurable: true
-    });
     Player.prototype.onDestroy = function () {
         this.button.destroy();
         Player.I = null;
@@ -82,8 +69,8 @@ var Player = (function (_super) {
         }
         // progress
         this.vy += Util.h(GRAVITY_PER_H);
-        this.x += this.vx;
-        this.y += this.vy;
+        this.X += this.vx;
+        this.Y += this.vy;
         this.display.scaleY += (1 - this.display.scaleY) * 0.2;
         // on the wall
         if (this.checkWalls()) {
@@ -97,8 +84,8 @@ var Player = (function (_super) {
             return;
         new GameOver();
         this.state = this.stateMiss;
-        new EffectCircle(this.x, this.y, this.radius, PLAYER_COLOR);
-        EffectLine.create(this.x, this.y, this.radius, PLAYER_COLOR, 8);
+        new EffectCircle(this.X, this.Y, this.radius, PLAYER_COLOR);
+        EffectLine.create(this.X, this.Y, this.radius, PLAYER_COLOR, 8);
     };
     Player.prototype.stateMiss = function () {
     };
@@ -111,17 +98,17 @@ var Player = (function (_super) {
         var ndx = 0;
         var ndy = 0;
         Wall.walls.forEach(function (wall) {
-            if (wall.py0 > _this.y - range && wall.py1 < _this.y + range) {
+            if (wall.py0 > _this.Y - range && wall.py1 < _this.Y + range) {
                 // 最近点
-                var dx = _this.x - wall.px0;
-                var dy = _this.y - wall.py0;
+                var dx = _this.X - wall.px0;
+                var dy = _this.Y - wall.py0;
                 var dot = dx * wall.uvx + dy * wall.uvy;
                 dot = Util.clamp(dot, 0, wall.length);
                 var npx = wall.px0 + wall.uvx * dot;
                 var npy = wall.py0 + wall.uvy * dot;
                 // 接触判定と反射
-                dx = _this.x - npx;
-                dy = _this.y - npy;
+                dx = _this.X - npx;
+                dy = _this.Y - npy;
                 var l = Math.pow(dx, 2) + Math.pow(dy, 2);
                 if (l <= Math.pow(range, 2)) {
                     range = Math.sqrt(l);
@@ -138,10 +125,10 @@ var Player = (function (_super) {
             ndy *= _l;
             var dot = radius - range;
             dot *= 0.95;
-            this.x += ndx * dot;
-            this.y += ndy * dot;
-            // 頭打ちならスルー
-            if (this.vx * (this.x - Util.w(0.5)) < 0) {
+            this.X += ndx * dot;
+            this.Y += ndy * dot;
+            // 頭打ちならスルー (反対側まで着地しないでジャンプする)
+            if (this.vx * (this.X - Util.w(0.5)) < 0) {
                 hit = false;
             }
             dot = ndx * this.vx + ndy * this.vy;
@@ -151,7 +138,7 @@ var Player = (function (_super) {
         return hit;
     };
     Player.prototype.updateCamera = function () {
-        var camY = this.y - Util.h(0.65);
+        var camY = this.Y - Util.h(0.65);
         if (Camera2D.y > camY) {
             Camera2D.y += (camY - Camera2D.y) * 0.25;
         }

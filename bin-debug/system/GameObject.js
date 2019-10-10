@@ -13,6 +13,18 @@ var GameObject = (function () {
         this.display = null;
         GameObject.objects.push(this);
     }
+    Object.defineProperty(GameObject.prototype, "X", {
+        get: function () { return this.display.x; },
+        set: function (x) { this.display.x = x; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GameObject.prototype, "Y", {
+        get: function () { return this.display.y; },
+        set: function (y) { this.display.y = y; },
+        enumerable: true,
+        configurable: true
+    });
     GameObject.prototype.destroy = function () { this.deleteFlag = true; };
     GameObject.prototype.onDestroy = function () { };
     GameObject.initial = function (displayObjectContainer) {

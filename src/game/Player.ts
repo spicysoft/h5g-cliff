@@ -1,14 +1,9 @@
 // Liberapp 2019 - Tahiti Katagai
-// プレイヤー 四角
+// プレイヤー　まる
 
 class Player extends GameObject{
 
     static I:Player = null;
-
-    get x():number { return this.display.x; }
-    get y():number { return this.display.y; }
-    set x( x:number ){ this.display.x = x; }
-    set y( y:number ){ this.display.y = y; }
 
     vx:number;
     vy:number;
@@ -28,8 +23,6 @@ class Player extends GameObject{
         this.radius = Util.w(PLAYER_RADIUS_PER_W);
         this.setDisplay( Util.w(0.5), Util.h(0.5) + Util.w(0.3) );
         this.button = new Button( null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.0, null ); // 透明な全画面ボタン
-
-        // Camera2D.x = 
     }
 
     onDestroy(){
@@ -82,8 +75,8 @@ class Player extends GameObject{
 
         // progress
         this.vy += Util.h(GRAVITY_PER_H);
-        this.x += this.vx;
-        this.y += this.vy;
+        this.X += this.vx;
+        this.Y += this.vy;
         this.display.scaleY += (1 - this.display.scaleY) * 0.2;
 
         // on the wall
@@ -100,8 +93,8 @@ class Player extends GameObject{
             return;
         new GameOver();
         this.state = this.stateMiss;
-        new EffectCircle( this.x, this.y, this.radius, PLAYER_COLOR );
-        EffectLine.create( this.x, this.y, this.radius, PLAYER_COLOR, 8 );
+        new EffectCircle( this.X, this.Y, this.radius, PLAYER_COLOR );
+        EffectLine.create( this.X, this.Y, this.radius, PLAYER_COLOR, 8 );
     }
     stateMiss(){
     }
@@ -115,17 +108,17 @@ class Player extends GameObject{
         let ndx = 0;
         let ndy = 0;
         Wall.walls.forEach( wall => {
-            if( wall.py0 > this.y-range && wall.py1 < this.y+range ){
+            if( wall.py0 > this.Y-range && wall.py1 < this.Y+range ){
                 // 最近点
-                let dx = this.x - wall.px0;
-                let dy = this.y - wall.py0;
+                let dx = this.X - wall.px0;
+                let dy = this.Y - wall.py0;
                 let dot = dx*wall.uvx + dy*wall.uvy;
                 dot = Util.clamp( dot, 0, wall.length );
                 let npx = wall.px0 + wall.uvx * dot;
                 let npy = wall.py0 + wall.uvy * dot;
                 // 接触判定と反射
-                dx = this.x - npx;
-                dy = this.y - npy;
+                dx = this.X - npx;
+                dy = this.Y - npy;
                 let l = dx**2 + dy**2;
                 if( l <= range**2 ){
                     range = Math.sqrt( l );
@@ -144,11 +137,11 @@ class Player extends GameObject{
 
             let dot = radius - range;
             dot *= 0.95;
-            this.x += ndx*dot;
-            this.y += ndy*dot;
+            this.X += ndx*dot;
+            this.Y += ndy*dot;
             
             // 頭打ちならスルー (反対側まで着地しないでジャンプする)
-            if( this.vx * (this.x - Util.w(0.5)) < 0 ){
+            if( this.vx * (this.X - Util.w(0.5)) < 0 ){
                 hit = false;
             }
 
@@ -160,7 +153,7 @@ class Player extends GameObject{
     }
 
     updateCamera(){
-        let camY = this.y - Util.h(0.65);
+        let camY = this.Y - Util.h(0.65);
         if( Camera2D.y > camY ){
             Camera2D.y += (camY - Camera2D.y) * 0.25;
         }

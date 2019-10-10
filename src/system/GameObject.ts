@@ -10,6 +10,11 @@
 abstract class GameObject {
     
     public display:egret.DisplayObject = null;
+    
+    get X():number { return this.display.x; }
+    get Y():number { return this.display.y; }
+    set X( x:number ){ this.display.x = x; }
+    set Y( y:number ){ this.display.y = y; }
 
     constructor() {
         GameObject.objects.push(this);
