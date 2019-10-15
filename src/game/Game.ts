@@ -12,10 +12,10 @@ const ENEMY_SIZE_PER_W = 1/12;
 
 const SAVE_KEY_BESTSCORE = "cliff-bestScore";
 
-const BACK_COLOR = 0x205070;    // index.htmlで設定
-const FONT_COLOR = 0xc0c4d0;
-const PLAYER_COLOR = 0xff00b0;
-const WALL_COLOR = 0xe0e0e0;
+const BACK_COLOR = 0x808080;    // index.htmlで設定
+const FONT_COLOR = 0x00e0ff;
+const PLAYER_COLOR = 0x00e0ff;
+const WALL_COLOR = 0xd0d0d0;
 const ENEMY_COLOR0 = 0xff00ff;
 const ENEMY_COLOR1 = 0x8000ff;
 

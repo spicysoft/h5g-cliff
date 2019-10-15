@@ -1,6 +1,15 @@
 // Liberapp 2019 - Tahiti Katagai
 // カベ
 
+enum WallWaveType{
+    Wide,
+    Narrow,
+    Left,
+    Right,
+    Random,
+    Total
+}
+
 class Wall extends GameObject{
 
     static walls:Wall[] = [];

@@ -12,20 +12,32 @@ r.prototype = e.prototype, t.prototype = new r();
 };
 var EnemyType;
 (function (EnemyType) {
-    EnemyType[EnemyType["RightLeft"] = 0] = "RightLeft";
-    EnemyType[EnemyType["UpDown"] = 1] = "UpDown";
+    EnemyType[EnemyType["Stay"] = 0] = "Stay";
+    EnemyType[EnemyType["RightLeft"] = 1] = "RightLeft";
+    EnemyType[EnemyType["UpDown"] = 2] = "UpDown";
+    EnemyType[EnemyType["Big"] = 3] = "Big";
+    EnemyType[EnemyType["Total"] = 4] = "Total";
 })(EnemyType || (EnemyType = {}));
 var Enemy = (function (_super) {
     __extends(Enemy, _super);
     function Enemy(type, x, y) {
         var _this = _super.call(this) || this;
         _this.frame = 0;
+        _this.baseScale = 1;
+        _this.scale = 1;
         Enemy.enemies.push(_this);
         _this.type = type;
         _this.baseX = x;
         _this.baseY = y;
         _this.radius = Util.w(ENEMY_SIZE_PER_W) * 0.5;
         _this.setDisplay(x, y);
+        if (_this.type == EnemyType.Big) {
+            _this.radius *= 1.3;
+            _this.baseScale = _this.scale = 1.3;
+        }
+        egret.Tween.get(_this, { loop: true })
+            .to({ scale: _this.baseScale * 1.25 }, 0)
+            .to({ scale: _this.baseScale * 0.75 }, 500);
         return _this;
     }
     Enemy.prototype.onDestroy = function () {
@@ -50,14 +62,25 @@ var Enemy = (function (_super) {
         if (GameOver.I != null)
             return;
         this.frame++;
-        var offset = Math.sin(this.frame / 120 * Math.PI) * Util.w(0.1);
-        if (this.type == EnemyType.RightLeft) {
-            this.display.x = this.baseX + offset;
+        switch (this.type) {
+            case EnemyType.Stay:
+                break;
+            case EnemyType.RightLeft:
+                {
+                    var offset = Math.sin(this.frame / 120 * Math.PI) * Util.w(0.1);
+                    this.display.x = this.baseX + offset;
+                }
+                break;
+            case EnemyType.UpDown:
+                {
+                    var offset = Math.sin(this.frame / 120 * Math.PI) * Util.w(0.1);
+                    this.display.y = this.baseY + offset;
+                }
+                break;
+            case EnemyType.Big:
+                break;
         }
-        else {
-            this.display.y = this.baseY + offset;
-        }
-        this.display.scaleX = this.display.scaleY = 1.25 - 0.5 * (this.frame % 30) / 30;
+        this.display.scaleX = this.display.scaleY = this.scale;
         if (Math.pow((Player.I.X - this.X), 2) + Math.pow((Player.I.Y - this.Y), 2) <= Math.pow((Player.I.radius + this.radius), 2)) {
             Player.I.setStateMiss();
         }

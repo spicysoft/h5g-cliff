@@ -14,6 +14,7 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
         var _this = _super.call(this) || this;
+        _this.landing = false;
         _this.button = null;
         _this.state = _this.stateNone;
         _this.step = 0;
@@ -33,7 +34,7 @@ var Player = (function (_super) {
         var shape = new egret.Shape();
         this.display = shape;
         GameObject.gameDisplay.addChildAt(this.display, 1);
-        shape.graphics.beginFill(WALL_COLOR, 1);
+        shape.graphics.beginFill(PLAYER_COLOR, 1);
         shape.graphics.drawCircle(0, 0, this.radius);
         shape.graphics.endFill();
         shape.x = x;
@@ -49,17 +50,52 @@ var Player = (function (_super) {
     };
     Player.prototype.setStateHang = function () {
         this.state = this.stateHang;
+        this.display.scaleY = 1;
+        this.step = 0;
     };
     Player.prototype.stateHang = function () {
+        if (!this.landing) {
+            this.display.anchorOffsetY *= 0.9;
+            if ((++this.step) >= 60 * 3) {
+                if (this.step % 20 == 0) {
+                    this.display.anchorOffsetY = -this.radius * 0.2;
+                }
+                if (this.step >= 60 * 6) {
+                    this.setStateFall();
+                    return;
+                }
+            }
+        }
         if (this.button.press) {
             this.setStateJump();
         }
+    };
+    Player.prototype.setStateFall = function () {
+        this.state = this.stateFall;
+        this.X += this.radius * 0.1 * this.display.scaleX;
+        this.vx = 0;
+        this.vy = 0;
+        this.display.scaleY = 1;
+        this.display.anchorOffsetY = 0;
+        this.step = 0;
+    };
+    Player.prototype.stateFall = function () {
+        this.vy += Util.h(GRAVITY_PER_H);
+        this.Y += this.vy;
+        if (this.button.press) {
+            this.setStateJump();
+        }
+        if (this.checkWalls()) {
+            this.setStateHang();
+        }
+        this.checkFall();
     };
     Player.prototype.setStateJump = function () {
         this.state = this.stateJump;
         this.vx = Util.w(PLAYER_SPEED_X_PER_W) * this.display.scaleX;
         this.vy = Util.w(PLAYER_JUMP_Y_PER_W);
         this.display.scaleY = 1.5;
+        this.display.anchorOffsetY = 0;
         this.step = 0;
     };
     Player.prototype.stateJump = function () {
@@ -72,11 +108,11 @@ var Player = (function (_super) {
         this.X += this.vx;
         this.Y += this.vy;
         this.display.scaleY += (1 - this.display.scaleY) * 0.2;
-        // on the wall
         if (this.checkWalls()) {
             this.setStateHang();
             this.display.scaleX *= -1;
         }
+        this.checkFall();
         this.updateCamera();
     };
     Player.prototype.setStateMiss = function () {
@@ -134,8 +170,16 @@ var Player = (function (_super) {
             dot = ndx * this.vx + ndy * this.vy;
             this.vx -= ndx * dot;
             this.vy -= ndy * dot;
+            this.landing = ndy < 0;
         }
         return hit;
+    };
+    Player.prototype.checkFall = function () {
+        if (this.Y - Camera2D.y > Util.height) {
+            this.setStateMiss();
+            return true;
+        }
+        return false;
     };
     Player.prototype.updateCamera = function () {
         var camY = this.Y - Util.h(0.65);

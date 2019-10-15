@@ -4,6 +4,7 @@
 class GameOver extends GameObject{
 
     static I:GameOver = null;
+    rectFilter:Rect = null;
     texts:egret.TextField[] = [];
     retryButton:Button = null;
     step:number = 0;
@@ -21,14 +22,22 @@ class GameOver extends GameObject{
         super();
 
         GameOver.I = this;
-        this.texts[0] = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 12, FONT_COLOR, 0.5, 0.3, true, false);
+        this.rectFilter = new Rect( 0, 0, Util.width, Util.height, 0x000000, false, true );
+        egret.Tween.get(this.rectFilter.display,{loop:false})
+            .to({alpha:0}, 0)
+            .to({alpha:0.25}, 1000)
+
+        this.texts[0] = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 10, FONT_COLOR, 0.5, 0.3, true, false);
         egret.Tween.get(this.texts[0],{loop:false})
             .to({alpha:0}, 0)
             .to({alpha:1}, 1000)
+        
         GameObject.baseDisplay.addChild( this.texts[0] );
     }
 
     onDestroy() {
+        this.rectFilter.destroy();
+        this.rectFilter = null;
         this.texts.forEach( text =>{ GameObject.baseDisplay.removeChild( text ); });
         this.texts = null;
         GameOver.I = null;

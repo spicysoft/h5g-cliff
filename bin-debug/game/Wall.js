@@ -10,6 +10,15 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
+var WallWaveType;
+(function (WallWaveType) {
+    WallWaveType[WallWaveType["Wide"] = 0] = "Wide";
+    WallWaveType[WallWaveType["Narrow"] = 1] = "Narrow";
+    WallWaveType[WallWaveType["Left"] = 2] = "Left";
+    WallWaveType[WallWaveType["Right"] = 3] = "Right";
+    WallWaveType[WallWaveType["Random"] = 4] = "Random";
+    WallWaveType[WallWaveType["Total"] = 5] = "Total";
+})(WallWaveType || (WallWaveType = {}));
 var Wall = (function (_super) {
     __extends(Wall, _super);
     function Wall(px0, py0, px1, py1) {

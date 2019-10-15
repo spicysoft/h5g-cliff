@@ -14,12 +14,17 @@ var GameOver = (function (_super) {
     __extends(GameOver, _super);
     function GameOver() {
         var _this = _super.call(this) || this;
+        _this.rectFilter = null;
         _this.texts = [];
         _this.retryButton = null;
         _this.step = 0;
         _this.fadeInFrame = 64;
         GameOver.I = _this;
-        _this.texts[0] = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 12, FONT_COLOR, 0.5, 0.3, true, false);
+        _this.rectFilter = new Rect(0, 0, Util.width, Util.height, 0x000000, false, true);
+        egret.Tween.get(_this.rectFilter.display, { loop: false })
+            .to({ alpha: 0 }, 0)
+            .to({ alpha: 0.25 }, 1000);
+        _this.texts[0] = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 10, FONT_COLOR, 0.5, 0.3, true, false);
         egret.Tween.get(_this.texts[0], { loop: false })
             .to({ alpha: 0 }, 0)
             .to({ alpha: 1 }, 1000);
@@ -34,6 +39,8 @@ var GameOver = (function (_super) {
         return GameOver.I;
     };
     GameOver.prototype.onDestroy = function () {
+        this.rectFilter.destroy();
+        this.rectFilter = null;
         this.texts.forEach(function (text) { GameObject.baseDisplay.removeChild(text); });
         this.texts = null;
         GameOver.I = null;

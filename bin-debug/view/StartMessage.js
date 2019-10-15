@@ -14,8 +14,11 @@ var StartMessage = (function (_super) {
     __extends(StartMessage, _super);
     function StartMessage() {
         var _this = _super.call(this) || this;
+        _this.rectFilter = null;
         _this.texts = [];
         StartMessage.I = _this;
+        _this.rectFilter = new Rect(0, Util.h(0.1), Util.width, Util.h(0.4), 0x000000, false, true);
+        _this.rectFilter.display.alpha = 0.2;
         _this.texts[0] = Util.newTextField("カベキック", Util.width / 12, FONT_COLOR, 0.5, 0.2, true, false);
         _this.texts[1] = Util.newTextField("タッチでジャンプ！", Util.width / 19, FONT_COLOR, 0.5, 0.3, true, false);
         _this.texts[2] = Util.newTextField("左右の壁をダブルジャンプで登っていこう", Util.width / 19, FONT_COLOR, 0.5, 0.35, true, false);
@@ -24,6 +27,8 @@ var StartMessage = (function (_super) {
         return _this;
     }
     StartMessage.prototype.onDestroy = function () {
+        this.rectFilter.destroy();
+        this.rectFilter = null;
         this.texts.forEach(function (text) { text.parent.removeChild(text); });
         this.texts = null;
         StartMessage.I = null;

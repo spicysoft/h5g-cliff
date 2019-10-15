@@ -15,23 +15,59 @@ var Wave = (function (_super) {
     function Wave() {
         var _this = _super.call(this) || this;
         _this.milestone = 0;
-        _this.wallY = Util.h(1);
-        _this.wallL = Util.w(0.15);
-        _this.wallR = Util.w(0.85);
+        _this.wallWave = WallWaveType.Wide;
+        _this.wallWaveFrame = 6;
         _this.enemyStep = 6;
+        _this.wallY = Util.h(1);
+        _this.wallL = Util.w(0.1);
+        _this.wallR = Util.w(0.9);
         return _this;
     }
     Wave.prototype.update = function () {
-        Game.hard = Util.clamp(Player.I.Y / Util.h(20), 0, 1);
+        Game.hard = Util.clamp(Player.I.Y / Util.h(10), 0, 1);
         while (this.wallY >= Camera2D.y - Util.h(0.5)) {
+            if ((--this.wallWaveFrame) <= 0) {
+                this.wallWaveFrame = randI(2, Util.lerp(6 + 1, 2 + 1, Game.hard));
+                this.wallWave = randI(0, WallWaveType.Total);
+            }
             var y = this.wallY - Util.h(1 / 8);
-            var l = randBool() ? Util.w(0.1) : Util.w(0.25);
-            var r = randBool() ? Util.w(0.9) : Util.w(0.75);
-            new Wall(this.wallL, this.wallY, l, y);
-            new Wall(this.wallR, this.wallY, r, y);
+            var l = void 0;
+            var r = void 0;
+            switch (this.wallWave) {
+                case WallWaveType.Wide:
+                    l = Util.w(0.1);
+                    r = Util.w(0.9);
+                    new Wall(this.wallL, this.wallY, l, y);
+                    new Wall(this.wallR, this.wallY, r, y);
+                    break;
+                case WallWaveType.Narrow:
+                    l = Util.w(0.25);
+                    r = Util.w(0.75);
+                    new Wall(this.wallL, this.wallY, l, y);
+                    new Wall(this.wallR, this.wallY, r, y);
+                    break;
+                case WallWaveType.Left:
+                    l = Util.w(0.1);
+                    r = Util.w(0.75);
+                    new Wall(this.wallL, this.wallY, l, y);
+                    new Wall(this.wallR, this.wallY, r, y);
+                    break;
+                case WallWaveType.Right:
+                    l = Util.w(0.25);
+                    r = Util.w(0.9);
+                    new Wall(this.wallL, this.wallY, l, y);
+                    new Wall(this.wallR, this.wallY, r, y);
+                    break;
+                case WallWaveType.Random:
+                    l = randBool() ? Util.w(0.1) : Util.w(0.25);
+                    r = randBool() ? Util.w(0.9) : Util.w(0.75);
+                    new Wall(this.wallL, this.wallY, l, y);
+                    new Wall(this.wallR, this.wallY, r, y);
+                    break;
+            }
             if ((--this.enemyStep) <= 0) {
-                this.enemyStep = randI(2, Util.lerp(6, 3, Game.hard));
-                var type = randBool() ? EnemyType.RightLeft : EnemyType.UpDown;
+                this.enemyStep = randI(Util.lerp(2.7, 1.7, Game.hard), Util.lerp(6 + 1, 3 + 1, Game.hard));
+                var type = randI(0, EnemyType.Total);
                 new Enemy(type, Util.w(0.5), y);
             }
             this.wallY = y;
